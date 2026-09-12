@@ -1,0 +1,39 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: #10151c;
+  color: #d8e5ef;
+  font-family: monospace;
+}
+
+body {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+}
+
+main {
+  width: min(94vw, 900px);
+  text-align: center;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border: 1px solid #364655;
+  background: #080b10;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+p {
+  margin: 10px 0 0;
+  color: #8da2b2;
+  font-size: 13px;
+}
