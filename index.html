@@ -8,9 +8,35 @@
 </head>
 <body>
   <main>
-    <canvas id="game" aria-label="Cell Survivor"></canvas>
+    <div class="game-layout">
+      <aside class="menu-panel" aria-label="Seleccionar personaje">
+        <h2>Personaje</h2>
+        <button class="skin-option selected" data-skin="player">
+          <img src="assets/skins/player.png" alt="">
+          <span>KATZU</span>
+        </button>
+        <button class="skin-option" data-skin="player1">
+          <img src="assets/skins/player1.png" alt="">
+          <span>TURRON</span>
+        </button>
+        <button class="skin-option" data-skin="player2">
+          <img src="assets/skins/player2.png" alt="">
+          <span>JALEA</span>
+        </button>
+      </aside>
+      <canvas id="game" aria-label="Cell Survivor"></canvas>
+      <aside class="menu-panel" aria-label="Ajustes">
+        <h2>Ajustes</h2>
+        <button id="music-toggle" type="button">Silenciar musica</button>
+        <button id="theme-toggle" type="button">Modo claro</button>
+      </aside>
+    </div>
+    <div id="bonus-menu" class="bonus-menu" hidden></div>
     <p>Mueve el ratón para controlar la célula. Mantén pulsado o haz clic para disparar.</p>
   </main>
+  <audio id="background-music" loop preload="auto">
+    <source src="assets/audio/backgruoundMusic.mp3" type="audio/mpeg">
+  </audio>
   <script src="game.js"></script>
 </body>
 </html>
