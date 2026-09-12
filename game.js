@@ -9,12 +9,16 @@ const enemiesPerWave = 100;
 const totalEnemiesToWin = 2000;
 const totalWaves = totalEnemiesToWin / enemiesPerWave;
 const specialWeaponDuration = 15000;
+const enemySpeedDivider = 2;
+const speedBoostMultiplier = 12;
 const playerNames = { player: 'KATZU', player1: 'TURRON', player2: 'JALEA' };
 const playerSelectionSounds = {
   player1: new Audio('assets/audio/player1.MP3'),
   player2: new Audio('assets/audio/player2.MP3')
 };
 Object.values(playerSelectionSounds).forEach((sound) => { sound.preload = 'auto'; });
+const victorySound = new Audio('assets/audio/victoria.mp3');
+victorySound.preload = 'auto';
 
 const state = {
   width: 0,
@@ -175,7 +179,7 @@ function reset() {
   state.gameWon = false;
   state.wave = 1;
   state.enemySpeedBoost = 0;
-  state.initialSpeedBoost = 5;
+  state.initialSpeedBoost = 2;
   state.bonusChoices = null;
   document.querySelector('#bonus-menu').hidden = true;
   state.player.x = state.width / 2;
@@ -256,6 +260,15 @@ function applyBonus(bonus) {
   }
 }
 
+function winGame() {
+  if (state.gameWon) return;
+  state.gameWon = true;
+  state.bonusChoices = null;
+  document.querySelector('#bonus-menu').hidden = true;
+  victorySound.currentTime = 0;
+  victorySound.play().catch(() => {});
+}
+
 function destroySegment(segment) {
   if (!segment.alive) return;
   const previousTier = Math.floor(state.score / 100);
@@ -263,9 +276,7 @@ function destroySegment(segment) {
   state.wormDistance -= state.segmentSpacing;
   state.score += 10;
   if (state.score / 10 >= totalEnemiesToWin) {
-    state.gameWon = true;
-    state.bonusChoices = null;
-    document.querySelector('#bonus-menu').hidden = true;
+    winGame();
     return;
   }
   const currentTier = Math.floor(state.score / 100);
@@ -370,8 +381,8 @@ function update(delta, time) {
 
   const liveSegments = state.segments.filter((segment) => segment.alive);
   if (!state.gameOver && !state.gameWon) {
-    const speedMultiplier = state.initialSpeedBoost > 0 ? 10.8 : state.enemySpeedBoost > 0 ? 3.6 : 1;
-    const wormSpeed = ((42 + Math.min(14, state.score * 0.01)) / 4) * speedMultiplier;
+    const speedMultiplier = state.initialSpeedBoost > 0 || state.enemySpeedBoost > 0 ? speedBoostMultiplier : 1;
+    const wormSpeed = ((42 + Math.min(14, state.score * 0.01)) / enemySpeedDivider) * speedMultiplier;
     state.wormDistance += wormSpeed * delta;
     liveSegments.forEach((segment, index) => {
       const targetDistance = state.wormDistance - index * state.segmentSpacing;
@@ -428,7 +439,7 @@ function update(delta, time) {
   }
 
   if (state.segments.every((segment) => !segment.alive) && !state.gameWon) {
-    if (state.wave >= totalWaves) state.gameWon = true;
+    if (state.wave >= totalWaves) winGame();
     else {
       state.wave += 1;
       createWorm();
@@ -626,6 +637,7 @@ document.querySelectorAll('.skin-option').forEach((button) => {
 
 window.addEventListener('resize', resize);
 
+startMusic();
 resize();
 loadSkins();
 reset();
